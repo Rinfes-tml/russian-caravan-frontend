@@ -1,0 +1,28 @@
+# Запрет индексации
+Header set X-Robots-Tag "noindex, nofollow"
+
+# Запрет кеширования
+Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+Header set Pragma "no-cache"
+Header set Expires 0
+
+# Запрет доступа к определенным файлам
+<FilesMatch "\.(env|json|config.js|md|gitignore|gitattributes|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Запрет просмотра директорий
+Options -Indexes
+
+# Запрет доступа к .git директории
+RedirectMatch 404 /\.git
+
+# Защита от хотлинкинга
+SetEnvIfNoCase Referer "^$" local_ref=1
+SetEnvIfNoCase Referer "^http(s)?://(www\.)?your-domain\.com/.*$" local_ref=1
+<FilesMatch "\.(gif|jpg|jpeg|png|webp|svg)$">
+    Order deny,allow
+    Deny from all
+    Allow from env=local_ref
+</FilesMatch> 
